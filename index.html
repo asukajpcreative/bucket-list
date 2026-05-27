@@ -361,21 +361,21 @@ function openModal(id = null) {
       <div class="translate-grid">
         <div>
           <small style="font-size:11px;color:var(--text3);">English</small>
-          <input type="text" id="f-en" value="${it ? (it.title_en || \'\') : \'\'" placeholder="English">
+          <input type="text" id="f-en" value="${it ? (it.title_en || ') : ''" placeholder="English">
         </div>
         <div>
           <small style="font-size:11px;color:var(--text3);">日本語</small>
-          <input type="text" id="f-ja" value="${it ? (it.title_ja || \'\') : \'\'" placeholder="日本語">
+          <input type="text" id="f-ja" value="${it ? (it.title_ja || ') : ''" placeholder="日本語">
         </div>
         <div>
           <small style="font-size:11px;color:var(--text3);">Русский</small>
-          <input type="text" id="f-ru" value="${it ? (it.title_ru || \'\') : \'\'" placeholder="Русский">
+          <input type="text" id="f-ru" value="${it ? (it.title_ru || ') : ''" placeholder="Русский">
         </div>
       </div>
       <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
-        <button type="button" onclick="openGoogleTranslate(\'en\')" style="font-size:12px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text2);">🌐 EN → JA / RU</button>
-        <button type="button" onclick="openGoogleTranslate(\'ja\')" style="font-size:12px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text2);">🌐 JA → EN / RU</button>
-        <button type="button" onclick="openGoogleTranslate(\'ru\')" style="font-size:12px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text2);">🌐 RU → EN / JA</button>
+        <button type="button" onclick="openGoogleTranslate('en')" style="font-size:12px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text2);">🌐 EN → JA / RU</button>
+        <button type="button" onclick="openGoogleTranslate('ja')" style="font-size:12px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text2);">🌐 JA → EN / RU</button>
+        <button type="button" onclick="openGoogleTranslate('ru')" style="font-size:12px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text2);">🌐 RU → EN / JA</button>
       </div>
       <div style="font-size:11px;color:var(--text3);margin-top:4px;">Google翻訳が開きます。翻訳結果をコピーして各欄に貼り付けてください。</div>
     </div>
