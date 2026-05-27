@@ -357,24 +357,27 @@ function openModal(id = null) {
   document.getElementById('modal-inner').innerHTML = `
     <h2>${id ? 'Edit item' : 'Add new item'}</h2>
     <div class="form-row">
-      <label>Title — type in any language, the other two auto-translate</label>
+      <label>Title — enter in one language, click Translate to open Google Translate</label>
       <div class="translate-grid">
         <div>
           <small style="font-size:11px;color:var(--text3);">English</small>
-          <input type="text" id="f-en" value="${it ? (it.title_en || '') : ''}" placeholder="English" oninput="scheduleTranslate('en')">
-          <div class="tl-status" id="tl-en"></div>
+          <input type="text" id="f-en" value="${it ? (it.title_en || \'\') : \'\'" placeholder="English">
         </div>
         <div>
           <small style="font-size:11px;color:var(--text3);">日本語</small>
-          <input type="text" id="f-ja" value="${it ? (it.title_ja || '') : ''}" placeholder="日本語" oninput="scheduleTranslate('ja')">
-          <div class="tl-status" id="tl-ja"></div>
+          <input type="text" id="f-ja" value="${it ? (it.title_ja || \'\') : \'\'" placeholder="日本語">
         </div>
         <div>
           <small style="font-size:11px;color:var(--text3);">Русский</small>
-          <input type="text" id="f-ru" value="${it ? (it.title_ru || '') : ''}" placeholder="Русский" oninput="scheduleTranslate('ru')">
-          <div class="tl-status" id="tl-ru"></div>
+          <input type="text" id="f-ru" value="${it ? (it.title_ru || \'\') : \'\'" placeholder="Русский">
         </div>
       </div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        <button type="button" onclick="openGoogleTranslate(\'en\')" style="font-size:12px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text2);">🌐 EN → JA / RU</button>
+        <button type="button" onclick="openGoogleTranslate(\'ja\')" style="font-size:12px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text2);">🌐 JA → EN / RU</button>
+        <button type="button" onclick="openGoogleTranslate(\'ru\')" style="font-size:12px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text2);">🌐 RU → EN / JA</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">Google翻訳が開きます。翻訳結果をコピーして各欄に貼り付けてください。</div>
     </div>
     <div class="form-2col">
       <div class="form-row">
@@ -422,38 +425,12 @@ function openModal(id = null) {
 
 function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
 
-function scheduleTranslate(lang) {
-  clearTimeout(translateTimer);
-  const val = (document.getElementById('f-' + lang) || {}).value?.trim();
-  if (!val) return;
-  ['en','ja','ru'].filter(l => l !== lang).forEach(l => {
-    const el = document.getElementById('tl-' + l); if (el) el.textContent = 'translating…';
-  });
-  translateTimer = setTimeout(() => doTranslate(lang, val), 800);
-}
-
-async function doTranslate(fromLang, text) {
-  const names = { en: 'English', ja: 'Japanese', ru: 'Russian' };
-  const targets = ['en','ja','ru'].filter(l => l !== fromLang);
-  const prompt = `Translate the following text into ${targets.map(l => names[l]).join(' and ')}. Reply ONLY with a JSON object like {"${targets[0]}":"...","${targets[1]}":"..."} with no extra text.\n\nText: ${text}`;
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 300, messages: [{ role: 'user', content: prompt }] })
-    });
-    const data = await res.json();
-    const raw = data.content.map(x => x.text || '').join('').replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(raw);
-    targets.forEach(l => {
-      const inp = document.getElementById('f-' + l);
-      const tl  = document.getElementById('tl-' + l);
-      if (inp && parsed[l]) inp.value = parsed[l];
-      if (tl) tl.textContent = '';
-    });
-  } catch(e) {
-    targets.forEach(l => { const tl = document.getElementById('tl-' + l); if (tl) tl.textContent = ''; });
-  }
+function openGoogleTranslate(fromLang) {
+  const text = (document.getElementById('f-' + fromLang) || {}).value?.trim();
+  if (!text) { alert('Please type something in the ' + fromLang.toUpperCase() + ' field first.'); return; }
+  const langMap = { en: 'en', ja: 'ja', ru: 'ru' };
+  const url = 'https://translate.google.com/?sl=' + langMap[fromLang] + '&tl=auto&text=' + encodeURIComponent(text) + '&op=translate';
+  window.open(url, '_blank');
 }
 
 async function saveItem() {
